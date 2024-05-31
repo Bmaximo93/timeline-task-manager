@@ -1,2 +1,4 @@
 Flask
+Flask-Session
 SQLalchemy
+flask-sqlalchemy
