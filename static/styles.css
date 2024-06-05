@@ -1,0 +1,51 @@
+.progress-bar {
+    height: 20px;
+}
+
+#timeline-container {
+    width: 80%;
+    margin: 0 auto;
+    height: 24px; 
+    overflow: hidden;
+}
+
+#timeline{ 
+    border: 2px solid;
+    border-color: black;
+    height: 23px;
+}
+
+
+#timebar{
+
+    position: absolute;
+    width: 3px;
+    background-color:black;
+    height: 40px;
+    left: 0px;
+    top: 250px;
+
+}
+
+.clock {
+    display: flex;
+    padding-top: 20px;
+    justify-content: center;
+    align-items: center;
+    color: black;
+    font-size: 80px;
+    font-family:helvetica
+  }
+
+  #hours{
+    text-align: center;
+   }
+   #minutes{
+     text-align: center;
+    }
+ 
+   .separator{
+     animation: blink 1.5s step-start infinite;
+     padding-left:5px;
+     padding-right: 5px;
+   }

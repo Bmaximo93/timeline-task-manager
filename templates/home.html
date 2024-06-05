@@ -1,0 +1,165 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Home
+{% endblock %}
+
+{% block script %}
+<script>
+    $(document).ready(function() {
+        function timeline() {
+            var now = new Date();
+            var hours = String(now.getHours()).padStart(2, '0');
+            var minutes = String(now.getMinutes()).padStart(2, '0');
+            $('#hours').text(hours);
+            $('#minutes').text(minutes);
+            console.log(hours, minutes);
+
+            var container = $('#timeline');
+            var seconds = (now.getHours() * 3600) + (now.getMinutes() * 60) + now.getSeconds();
+            var percent = (seconds / 86400 * 100) * container.width() / 100;
+            $('#timebar').css('left', percent + 'px');
+        }
+
+        function fetchTasks() {
+           $.ajax({
+                type: 'GET',
+                url: '/get_tasks',
+                success: function(response) {
+                    //process response data
+                    
+                    if (Array.isArray(response.tasks)){
+                        console.log('is array');
+                        console.log('Tasks:', response.tasks);
+                        drawTimelineBars(response.tasks);
+                    } else {
+                    console.error('Tasks data is not in the expected format:', response.tasks)};
+                },
+
+                error: function(xhr, status, error) {
+                    console.log('Error fetching tasks:', error);
+                }
+            })
+        } 
+
+        function drawTimelineBars(tasks) {
+            var container = $('#timeline');
+            var currentTaskInfo = $('#currentTaskInfo');
+            container.empty();
+
+            if (tasks.length === 0) {
+            currentTaskInfo.text('No tasks');
+            currentTaskInfo.css('color', 'grey');}
+
+            tasks.forEach(function(task) {
+
+                var startTime = new Date(task.start_time);
+                var endTime = new Date(task.end_time);
+                var dayStart = new Date();
+                dayStart.setHours(0, 0, 0, 0);
+
+                var totalDuration = endTime - startTime;
+                var elapsedDuration = Math.max(0, dayStart - startTime); // Ensure elapsedDuration is not negative
+
+                var durationPercent = ((endTime - startTime) / 86400000) * 100;
+                var elapsedPercent = Math.max(0, ((dayStart - startTime) / 86400000) * 100); // Ensure elapsedPercent is not negative
+
+                var barWidth = durationPercent - elapsedPercent;
+                var startPercent = ((startTime - dayStart) / 86400000) * 100; // Calculate startPercent based on startTime relative to start of the day
+                var barLeft = (startPercent / 100) * $('#timeline').width();
+
+                var bar = $('<div>', {
+                    'class': 'progress-bar',
+                    'role': 'progressbar',
+                    'aria-valuenow': '100',
+                    'aria-valuemin': '0',
+                    'aria-valuemax': '100',
+                    'style': 'position: absolute; left: ' + barLeft + 'px; width: ' + barWidth + '%; background-color: ' + task.color + ';',
+                    'text': task.name
+                });
+            container.append(bar);
+
+            if (task.status === 'current') {
+            $('#currentTaskInfo').text(task.name);
+            $('#currentTaskInfo').css('background-color', task.color);
+            } else {
+            currentTaskInfo.text('No tasks');
+            currentTaskInfo.css('color', 'grey');
+            }
+            
+            });
+        };
+
+        timeline();
+        fetchTasks();
+
+        setInterval(timeline, 60000);
+        setInterval(fetchTasks, 60000);
+
+        $('#addTaskForm').on('submit', function() {
+            $('#addTaskModal').modal('hide');
+        });
+
+    });
+</script>
+{% endblock %}
+
+{% block content %}
+
+<div class="clock">
+    <span id="hours"></span>
+    <span class="separator">:</span>
+    <span id="minutes"></span>
+</div>
+
+<h5 style="text-align:center; padding-bottom: 12px;">Current Task: <span id="currentTaskInfo"></span></h5>
+<div id="timeline-container">
+<div id="timebar"></div>
+<div id="timeline" class="progress" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
+    
+    <!-- timeline bars will be added here -->
+   
+
+</div>
+</div>
+
+<button class="btn btn-primary" data-toggle="modal" data-target="#addTaskModal" style="margin-top: 15px;">Add Task</button>
+
+<!-- Modal -->
+<div class="modal fade" id="addTaskModal" tabindex="-1" role="dialog" aria-labelledby="addTaskModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addTaskModalLabel">Add Task</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="/new_task" method="post" id="addTaskForm">
+                    <div class="form-group">
+                        <label for="taskName">Task Name</label>
+                        <input type="text" class="form-control" id="taskName" name="name" placeholder="Enter task name">
+                    </div>
+                    <div class="form-group">
+                        <label for="taskColor">Task Color</label>
+                        <input type="color" class="form-control" id="taskColor" name="color">
+                    </div>
+                    <div class="form-group">
+                        <label for="startTime">Start Time</label>
+                        <input type="time" class="form-control" id="startTime" name="start_time">
+                    </div>
+                    <div class="form-group">
+                        <label for="endTime">End Time</label>
+                        <input type="time" class="form-control" id="endTime" name="end_time">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="document.getElementById('addTaskForm').submit();">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

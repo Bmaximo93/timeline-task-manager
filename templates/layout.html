@@ -5,12 +5,45 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Timeline Task Manager</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <title>Timeline: {% block title %}{% endblock %}</title>
 </head>
 <body>
+    <nav class="navbar fixed-top bg-body-tertiary">
+        <div class="container-fluid">
+            <!-- <a class="navbar-brand" href="#">Navbar</a> -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                    <a class="nav-link active" aria-current="page" href="index.html">Home</a>
+                    <a class="nav-link" href="about_me.html">About Me</a>
+                    <a class="nav-link" href="rundown.html">CS50 Rundown</a>
+                    <a class="nav-link" href="final_project.html">My final project</a>
+                </div>
+            </div>
+        </div>
+    </nav>
     
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+            <header>
+                <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+                <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+                <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+                {% block script %}{% endblock %}
+                
+                {{ get_flashed_messages() | join(" ") }}
+                <div class="alert alert-primary mb-0 text-center" role="alert">
+                    {% if get_flashed_messages() %}
+                   
+                </div>
+                {% endif %}
+            </header>
+ 
+        <main class="container py-5 text-center">
+            {% block content %}{% endblock %}
+        </main>
 </body>
+
+   
 </html>
