@@ -24,7 +24,6 @@ class Task(db.Model):
     color = db.Column(db.String(30))
     start_time = db.Column(db.DateTime)
     end_time = db.Column(db.DateTime)
-    progress = db.Column(db.Float, default=0.0)
     status = db.Column(db.String(20))
 
 
@@ -39,11 +38,11 @@ def update_tasks():
             try:
                 print(f"Updating task: {task}")
                 
-                if task.end_time <= task.start_time:
+                if task.end_time <= now:
                     task.status = "completed"
-                if task.start_time <= now <= task.end_time:
+                elif task.start_time <= now <= task.end_time:
                     task.status = "current"
-                if now < task.start_time:
+                elif now < task.start_time:
                     task.status = "upcoming"
                 else:
                     task.status = "error"
@@ -70,7 +69,6 @@ def get_tasks():
         'color': task.color,
         'start_time': task.start_time.isoformat(),
         'end_time': task.end_time.isoformat(),
-        'progress': task.progress,
         'status': task.status,
     } for task in tasks]
     print("Fetched tasks:", task_list)  # Debugging statement
@@ -97,7 +95,6 @@ def new_task():
         color = request.form['color'],
         start_time = start_datetime,
         end_time = end_datetime,
-        progress = 0.0,
         status = "upcoming"
         ) # type: ignore
         db.session.add(task)

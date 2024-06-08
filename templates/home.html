@@ -43,6 +43,7 @@
         } 
 
         function drawTimelineBars(tasks) {
+
             var container = $('#timeline');
             var currentTaskInfo = $('#currentTaskInfo');
             container.empty();
@@ -53,46 +54,62 @@
 
             tasks.forEach(function(task) {
 
+                var now = new Date();
                 var startTime = new Date(task.start_time);
                 var endTime = new Date(task.end_time);
                 var dayStart = new Date();
+                var dayLen = 86400000;
                 dayStart.setHours(0, 0, 0, 0);
 
+                var startMs = startTime - dayStart;
+
                 var totalDuration = endTime - startTime;
-                var elapsedDuration = Math.max(0, dayStart - startTime); // Ensure elapsedDuration is not negative
 
-                var durationPercent = ((endTime - startTime) / 86400000) * 100;
-                var elapsedPercent = Math.max(0, ((dayStart - startTime) / 86400000) * 100); // Ensure elapsedPercent is not negative
-
-                var barWidth = durationPercent - elapsedPercent;
-                var startPercent = ((startTime - dayStart) / 86400000) * 100; // Calculate startPercent based on startTime relative to start of the day
+                var durationPercent = ((endTime - startTime) / dayLen) * 100;
+                var elapsedPercent = Math.max(0, ((dayStart - startTime) / dayLen) * 100);
+                var taskProgress = Math.min(100, ((now - startTime) / totalDuration) * 100);
+                
+    
+                var startPercent = ((startTime - dayStart) / dayLen) * 100;
                 var barLeft = (startPercent / 100) * $('#timeline').width();
 
+
+                var secondaryColor = tinycolor(task.color).lighten(20).toString();
+
                 var bar = $('<div>', {
-                    'class': 'progress-bar',
+                    'class': 'progress',
                     'role': 'progressbar',
-                    'aria-valuenow': '100',
+                    'aria-valuenow': '+taskProgress+',
                     'aria-valuemin': '0',
                     'aria-valuemax': '100',
-                    'style': 'position: absolute; left: ' + barLeft + 'px; width: ' + barWidth + '%; background-color: ' + task.color + ';',
+                    'style': 'position: absolute; left: ' + barLeft + 'px; width: ' + durationPercent + '%; background-color: '+secondaryColor+';',
                     'text': task.name
                 });
+                
+                var barProgress = $('<div>', {
+                        'class': 'progress-bar',
+                        'style': 'position: absolute; width: ' + taskProgress + '%; background-color: ' + task.color + ';'
+                    });
+
             container.append(bar);
+            bar.append(barProgress);
 
             if (task.status === 'current') {
             $('#currentTaskInfo').text(task.name);
-            $('#currentTaskInfo').css('background-color', task.color);
-            } else {
+            $('#currentTaskInfo').css('color', task.color);
+            } /*else {
             currentTaskInfo.text('No tasks');
             currentTaskInfo.css('color', 'grey');
-            }
+            }*/
             
             });
         };
 
         timeline();
         fetchTasks();
+        drawTimelineBars();
 
+        setInterval(drawTimelineBars, 60000);
         setInterval(timeline, 60000);
         setInterval(fetchTasks, 60000);
 
@@ -113,8 +130,9 @@
 </div>
 
 <h5 style="text-align:center; padding-bottom: 12px;">Current Task: <span id="currentTaskInfo"></span></h5>
-<div id="timeline-container">
 <div id="timebar"></div>
+<div id="timeline-container">
+
 <div id="timeline" class="progress" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
     
     <!-- timeline bars will be added here -->
