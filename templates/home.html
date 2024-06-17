@@ -1,11 +1,13 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    Home
+    Your Timeline
 {% endblock %}
 
 {% block script %}
 <script>
+
+    var tasks = [];
     $(document).ready(function() {
         function timeline() {
             var now = new Date();
@@ -17,8 +19,6 @@
 
             var container = $('#timeline');
             var seconds = (now.getHours() * 3600) + (now.getMinutes() * 60) + now.getSeconds();
-            var percent = (seconds / 86400 * 100) * container.width() / 100;
-            $('#timebar').css('left', percent + 'px');
         }
 
         function fetchTasks() {
@@ -29,6 +29,7 @@
                     //process response data
                     
                     if (Array.isArray(response.tasks)){
+                        tasks = response.tasks;
                         console.log('is array');
                         console.log('Tasks:', response.tasks);
                         drawTimelineBars(response.tasks);
@@ -44,35 +45,65 @@
 
         function drawTimelineBars(tasks) {
 
+            var dayLen = 86400000;
             var container = $('#timeline');
+            var taskCards = $('#task-cards');
             var currentTaskInfo = $('#currentTaskInfo');
             container.empty();
 
-            if (tasks.length === 0) {
-            currentTaskInfo.text('No tasks');
-            currentTaskInfo.css('color', 'grey');}
+            
 
-            tasks.forEach(function(task) {
+            tasks.forEach( function(task) {
+
+                if (tasks.length === 0) {
+                    currentTaskInfo.text('No tasks');
+                    currentTaskInfo.css('color', 'grey');
+                    $('#progress-radial').css({
+                    "background": `radial-gradient(closest-side, whitesmoke 85%, transparent 80% 100%), 
+                    conic-gradient(grey 0%, grey $0%)`
+                    });
+                }
 
                 var now = new Date();
                 var startTime = new Date(task.start_time);
                 var endTime = new Date(task.end_time);
                 var dayStart = new Date();
-                var dayLen = 86400000;
                 dayStart.setHours(0, 0, 0, 0);
+                dayEnd = new Date(dayStart);
+                dayEnd.setHours(23, 59, 59, 999);
 
                 var startMs = startTime - dayStart;
+                var endMs = dayEnd - startTime;
 
                 var totalDuration = endTime - startTime;
+                let hoursDuration = Math.floor(totalDuration / (1000 * 60 * 60));
+                let minutesDuration = Math.floor((totalDuration % (1000 * 60 * 60)) / (1000 * 60));
+                // duration in hours and minutes might be used later to display task duration
+
+                let startHours = new Date(startTime).getHours();
+                let startMinutes = new Date(startTime).getMinutes();
+
+                // Extract hours and minutes from end datetime
+                let endHours = new Date(endTime).getHours();
+                let endMinutes = new Date(endTime).getMinutes();
+
+                console.log(`name: ${task.name}`);
+                console.log(`Start time: ${startHours}:${startMinutes}`);
+                console.log(`End time: ${endHours}:${endMinutes}`);
+
+                console.log(` ${hoursDuration} hours, ${minutesDuration} minutes`);
 
                 var durationPercent = ((endTime - startTime) / dayLen) * 100;
                 var elapsedPercent = Math.max(0, ((dayStart - startTime) / dayLen) * 100);
                 var taskProgress = Math.min(100, ((now - startTime) / totalDuration) * 100);
                 
     
-                var startPercent = ((startTime - dayStart) / dayLen) * 100;
-                var barLeft = (startPercent / 100) * $('#timeline').width();
-
+                var startPercent = (startMs / dayLen) * 100;
+                var endPercent = (endMs / dayLen) * 100;
+                
+                containerWidth = container.width();
+                var barLeft = (startPercent / 100) * containerWidth;
+                var barWidth = (durationPercent / 100) * containerWidth;
 
                 var secondaryColor = tinycolor(task.color).lighten(20).toString();
 
@@ -90,49 +121,87 @@
                         'class': 'progress-bar',
                         'style': 'position: absolute; width: ' + taskProgress + '%; background-color: ' + task.color + ';'
                     });
+                
+                var taskCard = $('<div>',{
+                    'class': 'card-body'
 
+                });
+
+            //taskCards.append(taskCard);
             container.append(bar);
             bar.append(barProgress);
+            
+            console.log('now:', now);
+
+            tbarProgress = Math.max(0, ((now - dayStart) / dayLen) * 100);
+            var tbarLeft = (tbarProgress / 100) * containerWidth;
+            $('#timebar').css('left', tbarLeft + 'px');
+
+            console.log('tbarProgress:', tbarProgress);
+            console.log('tbarLeft:', tbarLeft);
+            console.log('barLeft:', barLeft);
 
             if (task.status === 'current') {
             $('#currentTaskInfo').text(task.name);
             $('#currentTaskInfo').css('color', task.color);
-            } /*else {
+            $('#progress-radial').css({
+            "background": `radial-gradient(closest-side, whitesmoke 85%, transparent 80% 100%), 
+                       conic-gradient(${task.color} ${taskProgress}%, ${secondaryColor} ${taskProgress}%)`
+            });
+            } else {
             currentTaskInfo.text('No tasks');
             currentTaskInfo.css('color', 'grey');
-            }*/
+            $('#progress-radial').css({
+            "background": `radial-gradient(closest-side, whitesmoke 85%, transparent 80% 100%), 
+                       conic-gradient(grey 0%, grey $0%)`
+            });
+            }
             
             });
         };
 
         timeline();
         fetchTasks();
-        drawTimelineBars();
 
-        setInterval(drawTimelineBars, 60000);
-        setInterval(timeline, 60000);
-        setInterval(fetchTasks, 60000);
+        setInterval(timeline, 1000);
+        setInterval(fetchTasks, 1000);
 
         $('#addTaskForm').on('submit', function() {
             $('#addTaskModal').modal('hide');
         });
 
+        $(window).on('resize', function() {
+        console.log('Window resized');
+        drawTimelineBars(tasks);
+        });
+
+        
+
     });
+    
 </script>
 {% endblock %}
 
 {% block content %}
+<h3 style="text-align:center; padding: 15px;"><span id="currentTaskInfo"></span></h3>
 
+<div class="main-container">
+<div id="progress-radial-container">
+    <div id="progress-radial" class="progress-bar-radial">   
 <div class="clock">
     <span id="hours"></span>
     <span class="separator">:</span>
     <span id="minutes"></span>
 </div>
+</div>
+<progress value="75" min="0" max="100" style="visibility:hidden;height:0;width:0;">75%</progress>
+</div>
 
-<h5 style="text-align:center; padding-bottom: 12px;">Current Task: <span id="currentTaskInfo"></span></h5>
-<div id="timebar"></div>
+
+
+
 <div id="timeline-container">
-
+<div id="timebar"></div>
 <div id="timeline" class="progress" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
     
     <!-- timeline bars will be added here -->
@@ -140,10 +209,62 @@
 
 </div>
 </div>
+<hr>
+<div class="task-list-container">
+<h5>Task List</h5>
 
-<button class="btn btn-primary" data-toggle="modal" data-target="#addTaskModal" style="margin-top: 15px;">Add Task</button>
 
-<!-- Modal -->
+</div>
+<div class="card-container">
+    <div id="card-add" class="card">
+        <div class="card-body">
+            <button class="btn btn-sm" data-toggle="modal" data-target="#addTaskModal" style="display: flex; padding: 0;border-radius: .5rem; float: left; background-color: #d7d7d7"><span class="material-symbols-outlined">
+                add
+                </span><p style="margin: auto; padding-right: 15px; font-weight: 500;">New Task</p></button>
+                <button class="btn btn-sm delete" ><span class="material-symbols-outlined" style="border: none; padding: 0; margin: 1;">
+                    more_horiz
+                    </span></button>
+        </div> 
+    </div>
+    <div id="task-cards">
+        <div class = "card">
+            <div class="card-color"></div>
+            <div class="card-body">
+                <div>
+                
+                <h6 class="card-title" style="margin-bottom: auto; margin-top: auto;">Task Name</h6>
+                <div class="duration">
+                    <span class="material-symbols-outlined" style=" margin: 0; padding-right: 5px; font-size: 14px;">
+                    schedule
+                    </span>
+                    <p class="time" style="margin-bottom: 0;">12:30 - 16:20</p>
+                </div>
+               
+                </div>
+                <div class="info">
+                    <p class="status" style="color:green; margin-bottom: 0;">current</p>
+                    
+               
+                <button class="btn btn-sm delete" ><span class="material-symbols-outlined" style="border: none; padding: 0; margin: 1; ">
+                    more_horiz
+                    </span>
+                </div>
+        </div>
+
+        </div>
+    </div>
+      
+    <!-- task cards will be added here-->
+      
+
+</div>
+
+</div>
+
+</div>
+
+
+
 <div class="modal fade" id="addTaskModal" tabindex="-1" role="dialog" aria-labelledby="addTaskModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -179,5 +300,4 @@
             </div>
         </div>
     </div>
-</div>
 {% endblock %}
