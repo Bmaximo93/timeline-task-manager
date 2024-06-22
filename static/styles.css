@@ -107,10 +107,10 @@ body {
   'opsz' 70
 }
 
-.delete {
+.innerbtn {
     display: inline-flex;
     border-radius: .5rem;
-    background-color: #d7d7d7;
+    background-color: #ebebeb;
     color: black;
     cursor: pointer;
     border: none;
@@ -171,13 +171,23 @@ body {
 
 .card-title {
     padding-left: 5px;
-    font-size: 22px;
-    float: left;
+    font-size: 18px;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-bottom: 3px;
+    margin-top: 0;
+
+}
+
+.cardLeftContent {
+    margin-left: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 
 }
 
 .duration{
-    clear: left;
     display: flex;
     align-items: center;
     justify-content: flex-start;
@@ -188,8 +198,8 @@ body {
 
 .info{
     display: flex;
-    align-items: center; /* Center children vertically */
-    gap: 10px;
+    align-items: center; 
+    gap: 8px;
 }
 
 .time {
@@ -197,8 +207,10 @@ body {
 }
 
 .status {
-    font-size: 15px;
+    font-size: 13px;
     margin-right: 10px;
+    margin-top: auto;
+    margin-bottom: auto;
 
 }
 
@@ -212,4 +224,157 @@ body {
 
 #task-cards {
     max-width: inherit;
+}
+
+
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.task-time-container {
+    display: flex;
+    gap: 20px;
+}
+
+.task-time-container .form-group {
+    flex: 1; 
+}
+
+label{
+    margin-bottom: 0px;
+}
+
+
+
+.innerbtn:hover {
+    transition: all 0.2s;
+    background-color: #d0d0d0;
+  }
+
+  .innerbtn:active {
+    transition: all 0.2s;
+    background-color: #d0d0d0 !important;
+  }
+
+  
+
+.delete-task-btn:hover {
+    transition: all 0.2s;
+    background-color: indianred;
+    color: white;
+}
+
+
+
+
+.delete-task-btn:active {
+    transition: all 0.2s;
+    background-color: indianred !important;
+    color: white !important;
+}
+
+.btn-secondary {
+    background-color:  #ebebeb;
+    color: black;
+    border: 0;
+}
+
+.btn-secondary:hover {
+    transition: all 0.2s;
+    background-color:  #d0d0d0;
+    color: black;
+    border: 0;
+}
+
+.custom-popup {
+    border-radius: 10px; 
+    border: 0.5px solid black;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+}
+
+.custom-cancel-button {
+    color: rgb(28, 28, 28) !important;
+    border-radius: .5rem !important;
+}
+
+.custom-confirm-button {
+    border-radius: .5rem  !important;
+}
+
+.form-check-reverse {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: space-between;
+    align-items: center;
+    margin-right: 5px;
+}
+
+
+#new-task-button:hover {
+    transition: all 0.2s;
+    background-color: #c5c5c5 !important;
+}
+
+.btn-primary {
+    background-color: rgb(56, 56, 56) ;
+    color: white;
+    border: 0;
+}
+
+.btn-primary:hover {
+    transition: all 0.2s;
+    background-color: rgb(40, 40, 40) !important;
+    color: white;
+    border: 0;
+}
+
+.modal-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+
+
+.modal-footer {
+    background-color: #ebebeb;
+}
+
+.custom-cancel-button:hover {
+    transition: all 0.2s;
+   background-color: #ebebeb !important;
+   color: black !important;
+}
+
+.custom-cancel-button:active {
+    transition: all 0.2s;
+   background-color: #ebebeb !important;
+   color: black !important;
+}
+
+.dismiss{
+    background-color: #ebebeb !important;
+    color: rgb(50, 50, 50) !important;   
+}
+
+.dismiss:hover {
+    transition: all 0.2s;
+    background-color: #ebebeb !important;
+    color: rgb(15, 15, 15) !important;   
+}
+
+.dismiss:active {
+    transition: all 0.2s;
+    background-color: #ebebeb !important;
+    color: rgb(15, 15, 15) !important; 
+}
+
+.x {
+    margin-top: auto;
+    padding-bottom: 3px;
+    margin-right: 5px;
 }
