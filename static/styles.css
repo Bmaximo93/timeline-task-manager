@@ -378,3 +378,7 @@ label{
     padding-bottom: 3px;
     margin-right: 5px;
 }
+
+.custom-popup {
+    max-width: 400px;
+}

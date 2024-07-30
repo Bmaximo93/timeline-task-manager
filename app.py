@@ -31,30 +31,33 @@ def update_tasks():
     with app.app_context():
         now = datetime.now()
         tasks = Task.query.all()
-        for task in tasks:
+        if tasks:
+            for task in tasks:
 
-            #print(f"Task {task.id} start time is {task.start_time}")
-            #print(f"Now = {now}")
-            try:
-                #print(f"Updating task: {task}")
-                
-                if task.end_time <= now:
-                    task.status = "complete"
-                elif task.start_time <= now <= task.end_time:
-                    task.status = "current"
-                elif now < task.start_time:
-                    task.status = "upcoming"
-                else:
-                    task.status = "error"
+                #print(f"Task {task.id} start time is {task.start_time}")
+                #print(f"Now = {now}")
+                try:
 
-                
-                #print(f"Updated task {task.id} status to {task.status}")
+                    #print(f"Updating task: {task}")
+                    
+                    if task.end_time <= now:
+                        task.status = "complete"
+                    elif task.start_time <= now <= task.end_time:
+                        task.status = "current"
+                    elif now < task.start_time:
+                        task.status = "upcoming"
+                    else:
+                        task.status = "error"
 
-            except Exception as e:
-                print(f"Error updating task {task.id}: {e}")
+                    
+                    #print(f"Updated task {task.id} status to {task.status}")
 
-        db.session.commit()
-        print("Updated tasks and committed changes")
+                except Exception as e:
+                    print(f"Error updating task {task.id}: {e}")
+
+            db.session.commit()
+
+        
         
 
 scheduler = BackgroundScheduler()
