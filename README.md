@@ -1,5 +1,5 @@
 # TIMELINE TASK MANAGER
-#### Video Demo:  https://youtu.be/KGRabGj2jyk?si=mpYXDFSCkw2l1MQ0
+
 #### Description:
 
   This application was developed as my final project for Harvard’s CS50x course. It is a simple time management app designed to help users visualize time, plan and manage their daily tasks. Moving forward, I plan to expand on this project by adding new features and enhancements to further improve functionality and user experience.
