@@ -19,10 +19,11 @@
 11. [Acknowledgments](#acknowledgments)
 
 ## Introduction:
-    
+<br><br>
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/762befbb-5fbe-4854-9838-fb50710fe8cf" alt="Screenshot" width="50%">
+  <img src="https://github.com/user-attachments/assets/762befbb-5fbe-4854-9838-fb50710fe8cf" alt="Screenshot" width="65%">
 </p>
+<br><br>
 
 
 Timeline Task Manager aims to streamline task organization through a visual representation of your day. This application was developed with the intention of assisting individuals with ADHD, autism, and other executive function disorders by providing a simple, clutter-free interface for time management, promoting productivity and efficient time allocation, inspired by similar applications such as [Owaves](https://owaves.com) and [Sectograph](https://www.sectograph.com). 
