@@ -21,7 +21,7 @@
 ## Introduction:
 <br><br>
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/762befbb-5fbe-4854-9838-fb50710fe8cf" alt="Screenshot" width="65%">
+  <img src="https://github.com/user-attachments/assets/762befbb-5fbe-4854-9838-fb50710fe8cf" alt="Screenshot" width="70%">
 </p>
 <br><br>
 
